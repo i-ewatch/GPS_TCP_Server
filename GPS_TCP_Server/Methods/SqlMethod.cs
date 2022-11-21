@@ -11,7 +11,7 @@ namespace GPS_TCP_Server.Methods
     public class SqlMethod
     {
         /// <summary>
-        /// 冰機資料庫連接物件
+        /// GPS資料庫連接物件
         /// </summary>
         protected SqlConnectionStringBuilder scsb { get; set; } = null;
         protected SqlConnectionStringBuilder Mscsb { get; set; } = null;

@@ -55,8 +55,7 @@ namespace GPS_TCP_Server.Components
                             {
                                 Data = TCP_Listen_Method.Response.Dequeue();
                                 if (Data != null)
-                                {
-
+                                { 
                                     switch (Data[22])
                                     {
                                         case "0401":

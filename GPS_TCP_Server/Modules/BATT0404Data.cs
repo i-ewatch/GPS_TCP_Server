@@ -2,7 +2,7 @@
 
 namespace GPS_TCP_Server.Modules
 {
-    public class BATT0404Data: BATTModule
+    public class BATT0404Data : BATTModule
     {
         #region GPS基本資訊
         /// <summary>
@@ -23,14 +23,7 @@ namespace GPS_TCP_Server.Modules
                 string minute = ttime.Substring(10, 2);
                 string second = ttime.Substring(12, 2);
                 int UTC = Convert.ToInt32(Convert.ToDouble(Longitude)) / 15;
-                if (Convert.ToInt32(hour) + UTC >= 24)
-                {
-                    return Convert.ToDateTime($"{year}/{month}/{day} {Convert.ToInt32(hour) + UTC - 24}:{minute}:{second}");
-                }
-                else
-                {
-                    return Convert.ToDateTime($"{year}/{month}/{day} {Convert.ToInt32(hour) + UTC}:{minute}:{second}");
-                }
+                return Convert.ToDateTime($"{year}/{month}/{day} {hour}:{minute}:{second}").AddHours(UTC);
             }
         }
         /// <summary>
@@ -81,43 +74,43 @@ namespace GPS_TCP_Server.Modules
         /// <summary>
         /// BMS_1綜合狀態
         /// </summary>
-        public int BMS1_Status { get; set; } 
+        public int BMS1_Status { get; set; }
         /// <summary>
         /// BMS_2綜合狀態
         /// </summary>
-        public int BMS2_Status { get; set; } 
+        public int BMS2_Status { get; set; }
         /// <summary>
         /// BMS_3綜合狀態
         /// </summary>
-        public int BMS3_Status { get; set; } 
+        public int BMS3_Status { get; set; }
         /// <summary>
         /// BMS_4綜合狀態
         /// </summary>
-        public int BMS4_Status { get; set; } 
+        public int BMS4_Status { get; set; }
         /// <summary>
         /// BMS_5綜合狀態
         /// </summary>
-        public int BMS5_Status { get; set; } 
+        public int BMS5_Status { get; set; }
         /// <summary>
         /// BMS_6綜合狀態
         /// </summary>
-        public int BMS6_Status { get; set; } 
+        public int BMS6_Status { get; set; }
         /// <summary>
         /// BMS_7綜合狀態
         /// </summary>
-        public int BMS7_Status { get; set; } 
+        public int BMS7_Status { get; set; }
         /// <summary>
         /// BMS_8綜合狀態
         /// </summary>
-        public int BMS8_Status { get; set; } 
+        public int BMS8_Status { get; set; }
         /// <summary>
         /// BMS_9綜合狀態
         /// </summary>
-        public int BMS9_Status { get; set; } 
+        public int BMS9_Status { get; set; }
         /// <summary>
         /// BMS_10綜合狀態
         /// </summary>
-        public int BMS10_Status { get; set; } 
+        public int BMS10_Status { get; set; }
 
     }
 }

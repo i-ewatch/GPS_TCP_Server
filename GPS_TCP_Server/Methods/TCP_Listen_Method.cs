@@ -63,47 +63,45 @@ namespace GPS_TCP_Server.Methods
             FilterServer.NewRequestReceived += (session, requesInfo) =>
             {
                 string[] filter = requesInfo.Body.Split('$');
+                string ipAddress_Receive = session.RemoteEndPoint.ToString();
                 if (filter.Length >= 2)
                 {
                     foreach (var item in filter)
                     {
-                        if(item.Contains("#"))
+                        if (item.Contains("#"))
                         {
                             string data = "$" + item;
                             string[] value = data.Split(',');
-                            string Body = string.Empty;
-                            Body = data.Replace("\t", "").Replace("\n", "").Replace("\r", "").Trim();
-                            string ipAddress_Receive = session.RemoteEndPoint.ToString();
-                            if (Body.Length >= 22)
+                            if (data.Length >= 22)
                             {
 
                                 if (value[22] == "0401" || value[22] == "0402" || value[22] == "0403" || value[22] == "0404")
                                 {
                                     Response.Enqueue(value);
                                     Form1.SetMessage("收到 " + ipAddress_Receive + $"於 {value[1]}" + " 數據 " + $"{value[21]}-{value[22]} ", true);
-                                    Log.Information("收到 " + ipAddress_Receive + $"於 {value[1]}" + " 數據 " + $"{value[21]}-{value[22]} 封包 " + Body);
+                                    Log.Information("收到 " + ipAddress_Receive + $"於 {value[1]}" + " 數據 " + $"{value[21]}-{value[22]} 封包 " + data);
                                 }
                                 else
                                 {
-                                    Log.Error("收到 " + ipAddress_Receive + $"於 {requesInfo.Parameters[1]}" + " 封包開頭錯誤 " + requesInfo.Body);
+                                    Log.Error("收到 " + ipAddress_Receive + $"於 {requesInfo.Parameters[1]}" + " 封包開頭錯誤 " + item);
                                 }
                             }
                             else
                             {
-                                Log.Error("收到 " + ipAddress_Receive + $"於 {requesInfo.Parameters[1]}" + " 封包長度錯誤 " + requesInfo.Body);
+                                Log.Error("收到 " + ipAddress_Receive + $"於 {requesInfo.Parameters[1]}" + " 封包長度錯誤 " + item);
                             }
+                        }
+                        else
+                        {
+                            Log.Error("收到 " + ipAddress_Receive + $"於 {requesInfo.Parameters[1]}" + " 封包長度錯誤 " + item);
                         }
                     }
                 }
                 else
                 {
                     string[] value = requesInfo.Body.Split(',');
-                    string Body = string.Empty;
-                    Body = requesInfo.Body.Replace("\t", "").Replace("\n", "").Replace("\r", "").Trim();
-                    string ipAddress_Receive = session.RemoteEndPoint.ToString();
                     if (requesInfo.Parameters.Length >= 22)
                     {
-
                         if (requesInfo.Parameters[22] == "0401" || requesInfo.Parameters[22] == "0402" || requesInfo.Parameters[22] == "0403" || requesInfo.Parameters[22] == "0404")
                         {
                             Response.Enqueue(requesInfo.Parameters);

@@ -27,14 +27,7 @@ namespace GPS_TCP_Server.Modules
                 string minute = ttime.Substring(10, 2);
                 string second = ttime.Substring(12, 2);
                 int UTC = Convert.ToInt32(Convert.ToDouble(Longitude)) / 15;
-                if (Convert.ToInt32(hour) + UTC >= 24)
-                {
-                    return Convert.ToDateTime($"{year}/{month}/{day} {Convert.ToInt32(hour) + UTC - 24}:{minute}:{second}");
-                }
-                else
-                {
-                    return Convert.ToDateTime($"{year}/{month}/{day} {Convert.ToInt32(hour) + UTC}:{minute}:{second}");
-                }
+                return Convert.ToDateTime($"{year}/{month}/{day} {hour}:{minute}:{second}").AddHours(UTC);
             }
         }
         /// <summary>
