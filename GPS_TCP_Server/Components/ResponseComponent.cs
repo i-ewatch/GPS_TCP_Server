@@ -47,15 +47,17 @@ namespace GPS_TCP_Server.Components
                 if (timeSpan.TotalSeconds >= 1)
                 {
                     int Index = 0;
-                    while (TCP_Listen_Method.Response.Count > 0)
+                    while (TCP_Listen_Method.ResponseStr.Count > 0)
                     {
                         try
                         {
                             if (Index <= 100)
                             {
-                                Data = TCP_Listen_Method.Response.Dequeue();
+                                //Data = TCP_Listen_Method.Response.Dequeue();
+                                string ResponseStr = TCP_Listen_Method.ResponseStr.Dequeue();
+                                Data = ResponseStr.Split(',');
                                 if (Data != null)
-                                { 
+                                {
                                     switch (Data[22])
                                     {
                                         case "0401":
@@ -280,6 +282,62 @@ namespace GPS_TCP_Server.Components
                                                 else
                                                 {
                                                     Log.Error($"0404封包長度錯誤(需39格) 封包 {Data.Length}");
+                                                }
+                                            }
+                                            break;
+                                        case "0101":
+                                            {
+                                                if (Data.Length >= 57)
+                                                {
+                                                    BATT0101Data data = new BATT0101Data();
+                                                    {
+                                                        data.ttime = Data[1];
+                                                        data.imei = Data[0].Substring(1, Data[0].Length - 1);
+                                                        data.Longitude = Data[2];
+                                                        data.Latitude = Data[3];
+                                                        data.Speed = Convert.ToDecimal(Data[4]);
+                                                        data.BattName = Data[21];
+                                                        data.BMS_OBU_BUS_VOLT = Convert.ToDecimal(Convert.ToDouble(Data[23]) * 0.01);
+                                                        data.BMS_OBU1_PACK_VOLT = Convert.ToDecimal(Convert.ToDouble(Data[24]) * 0.01);
+                                                        data.BMS_OBU2_PACK_VOLT = Convert.ToDecimal(Convert.ToDouble(Data[25]) * 0.01);
+                                                        data.BMS_OBU_BUS_CURR = Convert.ToDecimal(Convert.ToDouble(Data[26]) * 0.01);
+                                                        data.BMS_OBU1_CURR = Convert.ToDecimal(Convert.ToDouble(Data[27]));
+                                                        data.BMS_OBU2_CURR = Convert.ToDecimal(Convert.ToDouble(Data[28]));
+                                                        data.BMS_OBU1_SOC = Convert.ToDecimal(Convert.ToDouble(Data[29]));
+                                                        data.BMS_OBU2_SOC = Convert.ToDecimal(Convert.ToDouble(Data[30]));
+                                                        data.BMS_OBU1_SOH = Convert.ToDecimal(Convert.ToDouble(Data[31]));
+                                                        data.BMS_OBU2_SOH = Convert.ToDecimal(Convert.ToDouble(Data[32]));
+                                                        data.BMS_OBU1_MAX_CELL_VOLT = Convert.ToDecimal(Convert.ToDouble(Data[33]) * 0.001);
+                                                        data.BMS_OBU1_MIN_CELL_VOLT = Convert.ToDecimal(Convert.ToDouble(Data[34]) * 0.001);
+                                                        data.BMS_OBU2_MAX_CELL_VOLT = Convert.ToDecimal(Convert.ToDouble(Data[35]) * 0.001);
+                                                        data.BMS_OBU2_MIN_CELL_VOLT = Convert.ToDecimal(Convert.ToDouble(Data[36]) * 0.001);
+                                                        data.BMS_OBU1_MAX_CELL_TEMP = Convert.ToDecimal(Convert.ToDouble(Data[37]) * 0.1);
+                                                        data.BMS_OBU1_MIN_CELL_TEMP = Convert.ToDecimal(Convert.ToDouble(Data[38]) * 0.1);
+                                                        data.BMS_OBU2_MAX_CELL_TEMP = Convert.ToDecimal(Convert.ToDouble(Data[39]) * 0.1);
+                                                        data.BMS_OBU2_MIN_CELL_TEMP = Convert.ToDecimal(Convert.ToDouble(Data[40]) * 0.1);
+                                                        data.BMS_FaultNUM_G1 = Convert.ToInt32(Data[41]);
+                                                        data.BMS_FaultNUM_G2 = Convert.ToInt32(Data[42]);
+                                                        data.BMS_FaultNUM_G3 = Convert.ToInt32(Data[43]);
+                                                        data.BMS_FaultNUM_G4 = Convert.ToInt32(Data[44]);
+                                                        data.EPT_Status = Convert.ToInt32(Data[45]);
+                                                        data.BP_OBU_Enable_Control = Convert.ToInt32(Data[46]);
+                                                        data.BP_OBU_Output_Control = Convert.ToInt32(Data[47]);
+                                                        data.BP_OBU_Operation_State_Output_Control_Status = Convert.ToInt32(Data[48]);
+                                                        data.BP_OBU_HV_Control_Status = Convert.ToInt32(Data[49]);
+                                                        data.BP_OBU1_Warning_G1_G2 = Convert.ToInt32(Data[50]);
+                                                        data.BP_OBU1_Warning_G3_Fault_G1 = Convert.ToInt32(Data[51]);
+                                                        data.BP_OBU1_Fault_G2_G3 = Convert.ToInt32(Data[52]);
+                                                        data.BP_OBU1_Fault_G4 = Convert.ToInt32(Data[53]);
+                                                        data.BP_OBU2_Warning_G1_G2 = Convert.ToInt32(Data[54]);
+                                                        data.BP_OBU2_Warning_G3_Fault_G1 = Convert.ToInt32(Data[55]);
+                                                        data.BP_OBU2_Fault_G2_G3 = Convert.ToInt32(Data[56]);
+                                                        data.BP_OBU2_Fault_G4 = Convert.ToInt32(Data[57]);
+                                                    }
+                                                    SqlMethod.InserterBATT0101(data);
+                                                }
+                                                else
+                                                {
+                                                    Log.Error($"0101封包長度錯誤(需57格) 封包 {Data.Length}");
                                                 }
                                             }
                                             break;

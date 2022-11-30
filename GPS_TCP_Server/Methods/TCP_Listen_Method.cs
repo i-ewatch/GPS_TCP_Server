@@ -24,6 +24,7 @@ namespace GPS_TCP_Server.Methods
         /// 接收資訊
         /// </summary>
         public Queue<string[]> Response = new Queue<string[]>();
+        public Queue<string> ResponseStr = new Queue<string>();
         public TCP_Listen_Method(Form1 form1)
         {
             Form1 = form1;
@@ -68,32 +69,36 @@ namespace GPS_TCP_Server.Methods
                 {
                     foreach (var item in filter)
                     {
-                        if (item.Contains("#"))
+                        if (!string.IsNullOrEmpty(item))
                         {
-                            string data = "$" + item;
-                            string[] value = data.Split(',');
-                            if (data.Length >= 22)
+                            if (item.Contains("#"))
                             {
-
-                                if (value[22] == "0401" || value[22] == "0402" || value[22] == "0403" || value[22] == "0404")
+                                string data = "$" + item;
+                                string[] value = data.Split(',');
+                                if (data.Length >= 22)
                                 {
-                                    Response.Enqueue(value);
-                                    Form1.SetMessage("收到 " + ipAddress_Receive + $"於 {value[1]}" + " 數據 " + $"{value[21]}-{value[22]} ", true);
-                                    Log.Information("收到 " + ipAddress_Receive + $"於 {value[1]}" + " 數據 " + $"{value[21]}-{value[22]} 封包 " + data);
+
+                                    if (value[22] == "0401" || value[22] == "0402" || value[22] == "0403" || value[22] == "0404" || value[22] == "0101")
+                                    {
+                                        //Response.Enqueue(value);
+                                        ResponseStr.Enqueue(data);
+                                        Form1.SetMessage("收到 " + ipAddress_Receive + $"於 {value[1]}" + " 數據 " + $"{value[21]}-{value[22]} ", true);
+                                        Log.Information("收到 " + ipAddress_Receive + $"於 {value[1]}" + " 數據 " + $"{value[21]}-{value[22]} 封包 " + data);
+                                    }
+                                    else
+                                    {
+                                        Log.Error("收到 " + ipAddress_Receive + $"於 {requesInfo.Parameters[1]}" + " 封包開頭錯誤 " + item);
+                                    }
                                 }
                                 else
                                 {
-                                    Log.Error("收到 " + ipAddress_Receive + $"於 {requesInfo.Parameters[1]}" + " 封包開頭錯誤 " + item);
+                                    Log.Error("收到 " + ipAddress_Receive + $"於 {requesInfo.Parameters[1]}" + " 封包長度錯誤 " + item);
                                 }
                             }
                             else
                             {
                                 Log.Error("收到 " + ipAddress_Receive + $"於 {requesInfo.Parameters[1]}" + " 封包長度錯誤 " + item);
                             }
-                        }
-                        else
-                        {
-                            Log.Error("收到 " + ipAddress_Receive + $"於 {requesInfo.Parameters[1]}" + " 封包長度錯誤 " + item);
                         }
                     }
                 }
@@ -102,9 +107,10 @@ namespace GPS_TCP_Server.Methods
                     string[] value = requesInfo.Body.Split(',');
                     if (requesInfo.Parameters.Length >= 22)
                     {
-                        if (requesInfo.Parameters[22] == "0401" || requesInfo.Parameters[22] == "0402" || requesInfo.Parameters[22] == "0403" || requesInfo.Parameters[22] == "0404")
+                        if (requesInfo.Parameters[22] == "0401" || requesInfo.Parameters[22] == "0402" || requesInfo.Parameters[22] == "0403" || requesInfo.Parameters[22] == "0404" || requesInfo.Parameters[22] == "0101")
                         {
-                            Response.Enqueue(requesInfo.Parameters);
+                            //Response.Enqueue(requesInfo.Parameters);
+                            ResponseStr.Enqueue(requesInfo.Body);
                             Form1.SetMessage("收到 " + ipAddress_Receive + $"於 {requesInfo.Parameters[1]}" + " 數據 " + $"{requesInfo.Parameters[21]}-{requesInfo.Parameters[22]} ", true);
                             Log.Information("收到 " + ipAddress_Receive + $"於 {requesInfo.Parameters[1]}" + " 數據 " + $"{requesInfo.Parameters[21]}-{requesInfo.Parameters[22]} 封包 " + requesInfo.Body);
                         }

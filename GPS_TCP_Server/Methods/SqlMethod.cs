@@ -372,6 +372,52 @@ namespace GPS_TCP_Server.Methods
                                      $",[BMS10_Status] int NOT NULL DEFAULT 0" +
                                      $",CONSTRAINT [PK_BATT0404] PRIMARY KEY ([ttime],[ttimen],[imei],[BattName]))";
                     #endregion
+                    #region BATT0101
+                    string batt0101Sql = $"USE [GPSDB]; IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='BATT0101') CREATE TABLE [BATT0101] (" +
+                                    $" [ttime] NVARCHAR(14) NOT NULL" +
+                                    $",[ttimen] DATETIME NOT NULL" +
+                                    $",[imei] NVARCHAR(50) NOT NULL" +
+                                    $",[Longitude] NVARCHAR(50) NOT NULL DEFAULT ''" +
+                                    $",[Latitude] NVARCHAR(50) NOT NULL DEFAULT ''" +
+                                    $",[Speed] Decimal(18,2) NOT NULL DEFAULT 0" +
+                                    $",[BattName] NVARCHAR(16) NOT NULL" +
+                                    $",[BMS_OBU_BUS_VOLT] Decimal(18,2) NOT NULL DEFAULT 0" +
+                                    $",[BMS_OBU1_PACK_VOLT] Decimal(18,2) NOT NULL DEFAULT 0" +
+                                    $",[BMS_OBU2_PACK_VOLT] Decimal(18,2) NOT NULL DEFAULT 0" +
+                                    $",[BMS_OBU_BUS_CURR] Decimal(18,2) NOT NULL DEFAULT 0" +
+                                    $",[BMS_OBU1_CURR] Decimal(18,2) NOT NULL DEFAULT 0" +
+                                    $",[BMS_OBU2_CURR] Decimal(18,2) NOT NULL DEFAULT 0" +
+                                    $",[BMS_OBU1_SOC]  Decimal(18,2) NOT NULL DEFAULT 0" +
+                                    $",[BMS_OBU2_SOC]  Decimal(18,2) NOT NULL DEFAULT 0" +
+                                    $",[BMS_OBU1_SOH]  Decimal(18,2) NOT NULL DEFAULT 0" +
+                                    $",[BMS_OBU2_SOH]  Decimal(18,2) NOT NULL DEFAULT 0" +
+                                    $",[BMS_OBU1_MAX_CELL_VOLT]  Decimal(18,2) NOT NULL DEFAULT 0" +
+                                    $",[BMS_OBU1_MIN_CELL_VOLT]  Decimal(18,2) NOT NULL DEFAULT 0" +
+                                    $",[BMS_OBU2_MAX_CELL_VOLT]  Decimal(18,2) NOT NULL DEFAULT 0" +
+                                    $",[BMS_OBU2_MIN_CELL_VOLT]  Decimal(18,2) NOT NULL DEFAULT 0" +
+                                    $",[BMS_OBU1_MAX_CELL_TEMP]  Decimal(18,2) NOT NULL DEFAULT 0" +
+                                    $",[BMS_OBU1_MIN_CELL_TEMP]  Decimal(18,2) NOT NULL DEFAULT 0" +
+                                    $",[BMS_OBU2_MAX_CELL_TEMP]  Decimal(18,2) NOT NULL DEFAULT 0" +
+                                    $",[BMS_OBU2_MIN_CELL_TEMP]  Decimal(18,2) NOT NULL DEFAULT 0" +
+                                    $",[BMS_FaultNUM_G1] int NOT NULL DEFAULT 0" +
+                                    $",[BMS_FaultNUM_G2] int NOT NULL DEFAULT 0" +
+                                    $",[BMS_FaultNUM_G3] int NOT NULL DEFAULT 0" +
+                                    $",[BMS_FaultNUM_G4] int NOT NULL DEFAULT 0" +
+                                    $",[EPT_Status] int NOT NULL DEFAULT 0" +
+                                    $",[BP_OBU_Enable_Control] int NOT NULL DEFAULT 0" +
+                                    $",[BP_OBU_Output_Control] int NOT NULL DEFAULT 0" +
+                                    $",[BP_OBU_Operation_State_Output_Control_Status] int NOT NULL DEFAULT 0" +
+                                    $",[BP_OBU_HV_Control_Status] int NOT NULL DEFAULT 0" +
+                                    $",[BP_OBU1_Warning_G1_G2] int NOT NULL DEFAULT 0" +
+                                    $",[BP_OBU1_Warning_G3_Fault_G1] int NOT NULL DEFAULT 0" +
+                                    $",[BP_OBU1_Fault_G2_G3] int NOT NULL DEFAULT 0" +
+                                    $",[BP_OBU1_Fault_G4] int NOT NULL DEFAULT 0" +
+                                    $",[BP_OBU2_Warning_G1_G2] int NOT NULL DEFAULT 0" +
+                                    $",[BP_OBU2_Warning_G3_Fault_G1] int NOT NULL DEFAULT 0" +
+                                    $",[BP_OBU2_Fault_G2_G3] int NOT NULL DEFAULT 0" +
+                                    $",[BP_OBU2_Fault_G4] int NOT NULL DEFAULT 0" +
+                                    $",CONSTRAINT [PK_BATT0101] PRIMARY KEY ([ttime],[ttimen],[imei],[BattName]))";
+                    #endregion
                     conn.Execute(databaseSql);//資料庫
                     Thread.Sleep(10);
                     conn.Execute(battwebSql);//即時資料表
@@ -383,6 +429,8 @@ namespace GPS_TCP_Server.Methods
                     conn.Execute(batt0403Sql);//電池0403資料表
                     Thread.Sleep(10);
                     conn.Execute(batt0404Sql);//電池0404資料表
+                    Thread.Sleep(10);
+                    conn.Execute(batt0101Sql);//電池0404資料表
                 }
             }
             catch (Exception ex)
@@ -1642,6 +1690,95 @@ namespace GPS_TCP_Server.Methods
             catch (Exception ex)
             {
                 Log.Error(ex, $"更新BATT0404_WEB失敗  時間: {data.ttimen} 封包類型: {data.BattName}-0404");
+            }
+        }
+        public bool InserterBATT0101(BATT0101Data data)
+        {
+            try
+            {
+                using (var conn = new SqlConnection(scsb.ConnectionString))
+                {
+                    string sql = $"INSERT INTO [BATT0101] (ttime,ttimen,imei,Longitude,Latitude,Speed,BattName";
+                    string sqlend = " VALUES (@ttime,@ttimen,@imei,@Longitude,@Latitude,@Speed,@BattName";
+                    sql += ",BMS_OBU_BUS_VOLT" +
+                           ",BMS_OBU1_PACK_VOLT" +
+                           ",BMS_OBU2_PACK_VOLT" +
+                           ",BMS_OBU_BUS_CURR" +
+                           ",BMS_OBU1_CURR" +
+                           ",BMS_OBU2_CURR" +
+                           ",BMS_OBU1_SOC" +
+                           ",BMS_OBU2_SOC" +
+                           ",BMS_OBU1_SOH" +
+                           ",BMS_OBU2_SOH" +
+                           ",BMS_OBU1_MAX_CELL_VOLT" +
+                           ",BMS_OBU1_MIN_CELL_VOLT" +
+                           ",BMS_OBU2_MAX_CELL_VOLT" +
+                           ",BMS_OBU2_MIN_CELL_VOLT"+
+                           ",BMS_OBU1_MAX_CELL_TEMP" +
+                           ",BMS_OBU1_MIN_CELL_TEMP" +
+                           ",BMS_OBU2_MAX_CELL_TEMP" +
+                           ",BMS_OBU2_MIN_CELL_TEMP" +
+                           ",BMS_FaultNUM_G1" +
+                           ",BMS_FaultNUM_G2" +
+                           ",BMS_FaultNUM_G3" +
+                           ",BMS_FaultNUM_G4" +
+                           ",EPT_Status" +
+                           ",BP_OBU_Enable_Control" +
+                           ",BP_OBU_Output_Control" +
+                           ",BP_OBU_Operation_State_Output_Control_Status" +
+                           ",BP_OBU_HV_Control_Status" +
+                           ",BP_OBU1_Warning_G1_G2" +
+                           ",BP_OBU1_Warning_G3_Fault_G1" +
+                           ",BP_OBU1_Fault_G2_G3" +
+                           ",BP_OBU1_Fault_G4"+
+                           ",BP_OBU2_Warning_G1_G2" +
+                           ",BP_OBU2_Warning_G3_Fault_G1" +
+                           ",BP_OBU2_Fault_G2_G3" +
+                           ",BP_OBU2_Fault_G4)";
+                    sqlend += ",@BMS_OBU_BUS_VOLT" +
+                              ",@BMS_OBU1_PACK_VOLT" +
+                              ",@BMS_OBU2_PACK_VOLT" +
+                              ",@BMS_OBU_BUS_CURR" +
+                              ",@BMS_OBU1_CURR" +
+                              ",@BMS_OBU2_CURR" +
+                              ",@BMS_OBU1_SOC" +
+                              ",@BMS_OBU2_SOC" +
+                              ",@BMS_OBU1_SOH" +
+                              ",@BMS_OBU2_SOH" +
+                              ",@BMS_OBU1_MAX_CELL_VOLT" +
+                              ",@BMS_OBU1_MIN_CELL_VOLT" +
+                              ",@BMS_OBU2_MAX_CELL_VOLT" +
+                              ",@BMS_OBU2_MIN_CELL_VOLT" +
+                              ",@BMS_OBU1_MAX_CELL_TEMP" +
+                              ",@BMS_OBU1_MIN_CELL_TEMP" +
+                              ",@BMS_OBU2_MAX_CELL_TEMP" +
+                              ",@BMS_OBU2_MIN_CELL_TEMP" +
+                              ",@BMS_FaultNUM_G1" +
+                              ",@BMS_FaultNUM_G2" +
+                              ",@BMS_FaultNUM_G3" +
+                              ",@BMS_FaultNUM_G4" +
+                              ",@EPT_Status" +
+                              ",@BP_OBU_Enable_Control" +
+                              ",@BP_OBU_Output_Control" +
+                              ",@BP_OBU_Operation_State_Output_Control_Status" +
+                              ",@BP_OBU_HV_Control_Status" +
+                              ",@BP_OBU1_Warning_G1_G2" +
+                              ",@BP_OBU1_Warning_G3_Fault_G1" +
+                              ",@BP_OBU1_Fault_G2_G3" +
+                              ",@BP_OBU1_Fault_G4" +
+                              ",@BP_OBU2_Warning_G1_G2" +
+                              ",@BP_OBU2_Warning_G3_Fault_G1" +
+                              ",@BP_OBU2_Fault_G2_G3" +
+                              ",@BP_OBU2_Fault_G4)";
+                    sql += sqlend;
+                    conn.Execute(sql, data);
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, $"新增BATT0101_LOG失敗  時間: {data.ttimen} 封包類型: {data.BattName}-0101");
+                return false;
             }
         }
         #endregion
