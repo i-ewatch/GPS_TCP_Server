@@ -22,10 +22,21 @@ namespace GPS_TCP_Server
         /// </summary>
         private TCP_Listen_Method TCP_Listen_Method { get; set; }
         /// <summary>
+        /// 客戶端方法(轉發資訊)
+        /// </summary>
+        private TCP_Client_Method TCP_Client_Method { get; set; }
+        /// <summary>
         /// 資料庫方法
         /// </summary>
         private SqlMethod SqlMethod { get; set; }
+        /// <summary>
+        /// 接收資訊物件
+        /// </summary>
         private ResponseComponent ResponseComponent { get; set; }
+        /// <summary>
+        /// 發送資訊物件
+        /// </summary>
+        private SendComponent SendComponent { get; set; }
         /// <summary>
         /// 換日線
         /// </summary>
@@ -55,12 +66,21 @@ namespace GPS_TCP_Server
             MaximizeBox = false;
             CloseBox = false;
             SystemSetting = InitailMethod.System_Load();
+
             txt_Server_IP.Text = "Any";
             txt_Port.Text = SystemSetting.Server_Port;
+            txt_ClientDns.Text = "www.zheli.com.tw";
+            txt_ClientPort.Text = "20018";
+
             btn_StartListen.Enabled = false;
             btn_StopListen.Enabled = true;
+            btn_connect.Enabled = false;
+            btn_disconnect.Enabled = true;
             txt_Port.Enabled = false;
+            txt_ClientPort.Enabled = false;
+
             TCP_Listen_Method = new TCP_Listen_Method(this);
+            TCP_Client_Method = new TCP_Client_Method(txt_ClientDns.Text, Convert.ToInt32(txt_ClientPort.Text));
             SqlMethod = new SqlMethod(SystemSetting);
 
             #region 開啟監聽
@@ -72,6 +92,7 @@ namespace GPS_TCP_Server
                     btn_StartListen.Enabled = false;
                     btn_StopListen.Enabled = true;
                     txt_Port.Enabled = false;
+                    ResponseComponent.MyWorkState = true;
                 }
             };
             #endregion
@@ -84,7 +105,29 @@ namespace GPS_TCP_Server
                     btn_StartListen.Enabled = true;
                     btn_StopListen.Enabled = false;
                     txt_Port.Enabled = true;
+                    ResponseComponent.MyWorkState = false;
                 }
+            };
+            #endregion
+
+            #region 開始連線
+            btn_connect.Click += (s, e) =>
+            {
+                TCP_Client_Method.Connect_To_Server();
+                btn_connect.Enabled = false;
+                btn_disconnect.Enabled = true;
+                txt_ClientPort.Enabled = false;
+                SendComponent.MyWorkState = true;
+            };
+            #endregion
+            #region 關閉連線
+            btn_disconnect.Click += (s, e) =>
+            {
+                TCP_Client_Method.DisConnect_To_Server();
+                btn_connect.Enabled = true;
+                btn_disconnect.Enabled = false;
+                txt_ClientPort.Enabled = true;
+                SendComponent.MyWorkState = false;
             };
             #endregion
             #region 最小化
@@ -140,6 +183,9 @@ namespace GPS_TCP_Server
             TCP_Listen_Method.StartListen(txt_Port.Text);
             ResponseComponent = new ResponseComponent(SqlMethod, TCP_Listen_Method);
             ResponseComponent.MyWorkState = true;
+            TCP_Client_Method.Connect_To_Server();
+            SendComponent = new SendComponent(TCP_Client_Method,TCP_Listen_Method);
+            SendComponent.MyWorkState = true;
         }
 
         private void timer_Tick(object sender, EventArgs e)
@@ -150,6 +196,14 @@ namespace GPS_TCP_Server
                 NowDay = 0;
                 lbl_YesterDay.Invoke(new Action(() => { lbl_YesterDay.Text = $"{YesterDay}"; }));
                 Day = DateTime.Now.Day;
+            }
+            if (TCP_Client_Method.client.IsConnected)
+            {
+                stateIndicatorComponent1.StateIndex = 3;
+            }
+            else
+            {
+                stateIndicatorComponent1.StateIndex = 1;
             }
             lbl_NowDay.Invoke(new Action(() => { lbl_NowDay.Text = $"{NowDay}"; }));
         }
@@ -180,6 +234,14 @@ namespace GPS_TCP_Server
             if (FlyoutDialog.Show(FindForm(), control) == DialogResult.OK && string.Compare(textEdit.Text, "qu!t", true) == 0)
             {
                 if (ResponseComponent != null) ResponseComponent.MyWorkState = false;
+                if (TCP_Listen_Method != null)
+                {
+                    TCP_Listen_Method.StopListen();
+                }
+                if (TCP_Client_Method != null)
+                {
+                    TCP_Client_Method.DisConnect_To_Server();
+                }
                 timer.Enabled = false;
                 Application.ExitThread();
                 this.Dispose();

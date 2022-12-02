@@ -1,8 +1,10 @@
 ﻿using GPS_TCP_Server.Enums;
 using GPS_TCP_Server.Filter;
+using GPS_TCP_Server.Modules;
 using Serilog;
 using SuperSocket.SocketBase;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GPS_TCP_Server.Methods
 {
@@ -25,6 +27,10 @@ namespace GPS_TCP_Server.Methods
         /// </summary>
         public Queue<string[]> Response = new Queue<string[]>();
         public Queue<string> ResponseStr = new Queue<string>();
+        /// <summary>
+        /// 發送資訊
+        /// </summary>
+        public List<SendData> SendMessage = new List<SendData>();
         public TCP_Listen_Method(Form1 form1)
         {
             Form1 = form1;
@@ -75,13 +81,45 @@ namespace GPS_TCP_Server.Methods
                             {
                                 string data = "$" + item;
                                 string[] value = data.Split(',');
+                                string imei = value[0].Split('$')[1];
                                 if (data.Length >= 22)
                                 {
-
                                     if (value[22] == "0401" || value[22] == "0402" || value[22] == "0403" || value[22] == "0404" || value[22] == "0101")
                                     {
                                         //Response.Enqueue(value);
                                         ResponseStr.Enqueue(data);
+                                        #region 發送訊息
+                                        if (SendMessage.Count > 0)
+                                        {
+                                            SendData sendData = SendMessage.SingleOrDefault(g => g.imei == imei);
+                                            if (sendData == null)
+                                            {
+                                                SendMessage.Add(new SendData
+                                                {
+                                                    imei = imei,
+                                                    Message = item,
+                                                    SendFlag = true
+                                                });
+                                            }
+                                            else
+                                            {
+                                                if (!sendData.SendFlag)
+                                                {
+                                                    sendData.SendFlag = true;
+                                                }
+                                                sendData.Message = item;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            SendMessage.Add(new SendData
+                                            {
+                                                imei = imei,
+                                                Message = item,
+                                                SendFlag = true
+                                            });
+                                        }
+                                        #endregion
                                         Form1.SetMessage("收到 " + ipAddress_Receive + $"於 {value[1]}" + " 數據 " + $"{value[21]}-{value[22]} ", true);
                                         Log.Information("收到 " + ipAddress_Receive + $"於 {value[1]}" + " 數據 " + $"{value[21]}-{value[22]} 封包 " + data);
                                     }

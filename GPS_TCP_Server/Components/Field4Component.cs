@@ -5,9 +5,10 @@ using System.Threading;
 
 namespace GPS_TCP_Server.Components
 {
-    public class Field4Component: Component
+    public class Field4Component : Component
     {
         public TCP_Listen_Method TCP_Listen_Method { get; set; }
+        public TCP_Client_Method TCP_Client_Method { get; set; }
         public SqlMethod SqlMethod { get; set; }
         #region 初始設定
         /// <summary>

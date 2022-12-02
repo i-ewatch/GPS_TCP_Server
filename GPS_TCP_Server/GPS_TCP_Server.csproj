@@ -51,6 +51,8 @@
     <Reference Include="DevExpress.XtraBars.v20.1, Version=20.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
     <Reference Include="DevExpress.XtraEditors.v20.1" />
     <Reference Include="DevExpress.Printing.v20.1.Core" />
+    <Reference Include="DevExpress.XtraGauges.v20.1.Core, Version=20.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraGauges.v20.1.Win, Version=20.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.XtraGrid.v20.1, Version=20.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
     <Reference Include="DevExpress.XtraPrinting.v20.1, Version=20.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
     <Reference Include="DevExpress.XtraRichEdit.v20.1, Version=20.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
@@ -136,6 +138,12 @@
     <Compile Include="Components\ResponseComponent.Designer.cs">
       <DependentUpon>ResponseComponent.cs</DependentUpon>
     </Compile>
+    <Compile Include="Components\SendComponent.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\SendComponent.Designer.cs">
+      <DependentUpon>SendComponent.cs</DependentUpon>
+    </Compile>
     <Compile Include="Configuration\SystemSetting.cs" />
     <Compile Include="Enums\OperateType.cs" />
     <Compile Include="Filter\FilterServer.cs" />
@@ -148,6 +156,7 @@
     </Compile>
     <Compile Include="Methods\InitailMethod.cs" />
     <Compile Include="Methods\SqlMethod.cs" />
+    <Compile Include="Methods\TCP_Client_Method.cs" />
     <Compile Include="Methods\TCP_Listen_Method.cs" />
     <Compile Include="Modules\BATT0101Data.cs" />
     <Compile Include="Modules\BATT0401Data.cs" />
@@ -155,6 +164,7 @@
     <Compile Include="Modules\BATT0403Data.cs" />
     <Compile Include="Modules\BATT0404Data.cs" />
     <Compile Include="Modules\BATTModule.cs" />
+    <Compile Include="Modules\SendData.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">

@@ -67,7 +67,7 @@ namespace GPS_TCP_Server.Components
                                                     BATT0401Data data = new BATT0401Data();
                                                     {
                                                         data.ttime = Data[1];
-                                                        data.imei = Data[0].Substring(1, Data[0].Length - 1);
+                                                        data.imei = Data[0].Split('$')[1];
                                                         data.Longitude = Data[2];
                                                         data.Latitude = Data[3];
                                                         data.Speed = Convert.ToDecimal(Data[4]);
@@ -109,8 +109,12 @@ namespace GPS_TCP_Server.Components
                                                         data.Battery_TotalVoltage9 = Convert.ToDecimal(Convert.ToDouble(Data[57]) * 0.01);
                                                         data.Battery_TotalVoltage10 = Convert.ToDecimal(Convert.ToDouble(Data[58]) * 0.01);
                                                     }
-                                                    SqlMethod.InserterBATT0401(data);
-                                                    SqlMethod.UpdateBATT0401web(data);
+                                                    TimeSpan CheckedTime = DateTime.Now.Subtract(data.ttimen);
+                                                    if (CheckedTime.TotalHours <= 9)
+                                                    {
+                                                        SqlMethod.InserterBATT0401(data);
+                                                        SqlMethod.UpdateBATT0401web(data);
+                                                    }
                                                 }
                                                 else
                                                 {
@@ -125,7 +129,7 @@ namespace GPS_TCP_Server.Components
                                                     BATT0402Data data = new BATT0402Data();
                                                     {
                                                         data.ttime = Data[1];
-                                                        data.imei = Data[0].Substring(1, Data[0].Length - 1);
+                                                        data.imei = Data[0].Split('$')[1];
                                                         data.Longitude = Data[2];
                                                         data.Latitude = Data[3];
                                                         data.Speed = Convert.ToDecimal(Data[4]);
@@ -171,8 +175,12 @@ namespace GPS_TCP_Server.Components
                                                         data.Battery_Max_Temp10 = Convert.ToDecimal(Convert.ToDouble(Data[61]) * 0.01);
                                                         data.Battery_Min_Temp10 = Convert.ToDecimal(Convert.ToDouble(Data[62]) * 0.01);
                                                     }
-                                                    SqlMethod.InserterBATT0402(data);
-                                                    SqlMethod.UpdateBATT0402web(data);
+                                                    TimeSpan CheckedTime = DateTime.Now.Subtract(data.ttimen);
+                                                    if (CheckedTime.TotalHours <= 9)
+                                                    {
+                                                        SqlMethod.InserterBATT0402(data);
+                                                        SqlMethod.UpdateBATT0402web(data);
+                                                    }
                                                 }
                                                 else
                                                 {
@@ -187,7 +195,7 @@ namespace GPS_TCP_Server.Components
                                                     BATT0403Data data = new BATT0403Data();
                                                     {
                                                         data.ttime = Data[1];
-                                                        data.imei = Data[0].Substring(1, Data[0].Length - 1);
+                                                        data.imei = Data[0].Split('$')[1];
                                                         data.Longitude = Data[2];
                                                         data.Latitude = Data[3];
                                                         data.Speed = Convert.ToDecimal(Data[4]);
@@ -238,8 +246,12 @@ namespace GPS_TCP_Server.Components
                                                         data.BATT_OVP = Convert.ToInt32(Data[66]);
                                                         data.BATT_UVW = Convert.ToInt32(Data[67]);
                                                     }
-                                                    SqlMethod.InserterBATT0403(data);
-                                                    SqlMethod.UpdateBATT0403web(data);
+                                                    TimeSpan CheckedTime = DateTime.Now.Subtract(data.ttimen);
+                                                    if (CheckedTime.TotalHours <= 9)
+                                                    {
+                                                        SqlMethod.InserterBATT0403(data);
+                                                        SqlMethod.UpdateBATT0403web(data);
+                                                    }
                                                 }
                                                 else
                                                 {
@@ -254,7 +266,7 @@ namespace GPS_TCP_Server.Components
                                                     BATT0404Data data = new BATT0404Data();
                                                     {
                                                         data.ttime = Data[1];
-                                                        data.imei = Data[0].Substring(1, Data[0].Length - 1);
+                                                        data.imei = Data[0].Split('$')[1];
                                                         data.Longitude = Data[2];
                                                         data.Latitude = Data[3];
                                                         data.Speed = Convert.ToDecimal(Data[4]);
@@ -276,8 +288,12 @@ namespace GPS_TCP_Server.Components
                                                         data.BMS9_Status = Convert.ToInt32(Data[37]);
                                                         data.BMS10_Status = Convert.ToInt32(Data[38]);
                                                     }
-                                                    SqlMethod.InserterBATT0404(data);
-                                                    SqlMethod.UpdateBATT0404web(data);
+                                                    TimeSpan CheckedTime = DateTime.Now.Subtract(data.ttimen);
+                                                    if (CheckedTime.TotalHours <= 9)
+                                                    {
+                                                        SqlMethod.InserterBATT0404(data);
+                                                        SqlMethod.UpdateBATT0404web(data);
+                                                    }
                                                 }
                                                 else
                                                 {
@@ -292,7 +308,7 @@ namespace GPS_TCP_Server.Components
                                                     BATT0101Data data = new BATT0101Data();
                                                     {
                                                         data.ttime = Data[1];
-                                                        data.imei = Data[0].Substring(1, Data[0].Length - 1);
+                                                        data.imei = Data[0].Split('$')[1];
                                                         data.Longitude = Data[2];
                                                         data.Latitude = Data[3];
                                                         data.Speed = Convert.ToDecimal(Data[4]);
@@ -333,7 +349,11 @@ namespace GPS_TCP_Server.Components
                                                         data.BP_OBU2_Fault_G2_G3 = Convert.ToInt32(Data[56]);
                                                         data.BP_OBU2_Fault_G4 = Convert.ToInt32(Data[57]);
                                                     }
-                                                    SqlMethod.InserterBATT0101(data);
+                                                    TimeSpan CheckedTime = DateTime.Now.Subtract(data.ttimen);
+                                                    if (CheckedTime.TotalHours <= 9)
+                                                    {
+                                                        SqlMethod.InserterBATT0101(data);
+                                                    }
                                                 }
                                                 else
                                                 {
@@ -351,6 +371,7 @@ namespace GPS_TCP_Server.Components
                                 break;
                             }
                         }
+                        catch (ThreadAbortException) { }
                         catch (Exception ex)
                         {
                             Log.Error(ex, $"記錄錯誤  時間: {Data[1]}，封包類型: {Data[21]}-{Data[22]}");
